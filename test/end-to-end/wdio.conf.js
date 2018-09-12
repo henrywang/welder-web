@@ -47,6 +47,7 @@ exports.config = {
     maxInstances: 1,
     //
     browserName: 'firefox',
+    acceptInsecureCerts: true,
   }],
   //
   // ===================
@@ -79,7 +80,7 @@ exports.config = {
   // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
   // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
   // gets prepended directly.
-  baseUrl: 'http://localhost:9090/welder',
+  baseUrl: 'https://localhost:9090/welder',
   //
   // Default timeout for all waitFor* commands.
   waitforTimeout: 90000,
@@ -189,4 +190,17 @@ exports.testData = {
   image: [
     { type: 'tar', arch: 'x86_64' },
   ],
+
+  // cockpit authentication username and password
+  cockpit: {
+    root: {
+      username: 'root',
+      password: 'foobar',
+    },
+    admin: {
+      username: 'admin',
+      password: 'foobar',
+    },
+  },
+
 };

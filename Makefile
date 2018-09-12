@@ -117,7 +117,16 @@ lorax-test: shared
 	    sudo docker build -f Dockerfile.lorax -t welder/web-lorax:latest . ; \
 	fi;
 
-	sudo docker run -d --name web --restart=always -v bdcs-socket:/run/weldr -v `pwd`/public:/usr/share/cockpit/welder --network host welder/web-lorax:latest
+	# don't interfere with host-installed cockpit
+	sudo systemctl stop cockpit.socket cockpit.service || true
+
+	sudo docker run -d --name web \
+		--tmpfs /tmp --tmpfs /run \
+		--restart=always --network host \
+		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+		-v bdcs-socket:/run/weldr \
+		-v `pwd`/public:/usr/share/cockpit/welder \
+		welder/web-lorax:latest
 
 	sudo mkdir -p failed-image
 	sudo docker run --rm --name welder_end_to_end --network host \
@@ -141,17 +150,22 @@ bdcs-test: shared metadata.db build-rpm
 	sudo docker run -d --name api --restart=always -v bdcs-recipes-volume:/recipes -v `pwd`:/mddb -v bdcs-socket:/run/weldr --security-opt label=disable welder/bdcs-api-img:latest
 
 	if [ -n "$$TRAVIS" ]; then \
-	    sudo docker build -f Dockerfile.cockpit --cache-from welder/web-bdcs:latest -t welder/web-bdcs:latest .; \
+	    sudo docker build -f Dockerfile.bdcs --cache-from welder/web-bdcs:latest -t welder/web-bdcs:latest .; \
 	else \
-	    sudo docker build -f Dockerfile.cockpit -t welder/web-bdcs:latest .; \
+	    sudo docker build -f Dockerfile.bdcs -t welder/web-bdcs:latest .; \
 	fi;
 	# don't interfere with host-installed cockpit
 	sudo systemctl stop cockpit.socket cockpit.service || true
 
-	sudo docker run -d --name web -v bdcs-socket:/run/weldr --restart=always --network host welder/web-bdcs:latest
+	sudo docker run -d --name web \
+		--tmpfs /tmp --tmpfs /run \
+		--restart=always --network host \
+		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+		-v bdcs-socket:/run/weldr \
+		welder/web-bdcs:latest
 
-# Clean generated intermediate tar file and useless RPM file
-# RPM file is inside docker image already
+	# Clean generated intermediate tar file and useless RPM file
+	# RPM file is inside docker image already
 	rm -f welder-web*.rpm welder-web*.tar.gz
 
 	sudo docker run --rm --name welder_end_to_end --network host \

@@ -47,6 +47,9 @@ describe('Given Edit Blueprint Page', () => {
       assert.equal(actualBlueprintName, editBlueprintPage.blueprintName);
 
       const actualLink = $(editBlueprintPage.linkBlueprintName).getAttribute('href');
+      // the href attribute will return link like this
+      // https://127.0.0.2:9092/cockpit/$cca633e8fa1478313ae39ef12b45e04b07337e852433dc4fb0e1938732896bbd/
+      // welder/index.html#/blueprint/automation
       assert(actualLink.includes(editBlueprintPage.varLinkToViewRec));
 
       browser

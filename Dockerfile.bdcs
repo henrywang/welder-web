@@ -2,12 +2,13 @@ FROM fedora:latest
 LABEL maintainer="Xiaofeng Wang" \
       email="xiaofwan@redhat.com" \
       baseimage="Fedora:latest" \
-      description="Docker container with Cockpit and lorax-composer installed"
+      description="Docker container with Cockpit and Welder-Web installed"
 
 ENV container docker
 
+COPY welder-web*.rpm /tmp/
 RUN dnf -y update && \
-    dnf install -y lorax-composer cockpit && \
+    dnf install -y cockpit /tmp/welder-web*.noarch.rpm && \
     dnf clean all && \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done) && \
     rm -f /lib/systemd/system/multi-user.target.wants/* && \
@@ -18,8 +19,7 @@ RUN dnf -y update && \
     rm -f /lib/systemd/system/basic.target.wants/* && \
     rm -f /lib/systemd/system/anaconda.target.wants/* && \
     echo "root:foobar" | chpasswd && \
-    systemctl enable cockpit.socket && \
-    systemctl enable lorax-composer
+    systemctl enable cockpit.socket
 
 VOLUME ["/sys/fs/cgroup", "/run/weldr"]
 EXPOSE 9090
