@@ -128,6 +128,11 @@ lorax-test: shared
 		-v `pwd`/public:/usr/share/cockpit/welder \
 		welder/web-lorax:latest
 
+	sudo docker exec web ls -al /run
+	sudo docker exec web ls -al /run/weldr
+	sudo docker exec web systemctl status cockpit.socket
+	sudo docker exec web systemctl status lorax-composer
+
 	sudo mkdir -p failed-image
 	sudo docker run --rm --name welder_end_to_end --network host \
 	    -v `pwd`/.nyc_output/:/tmp/.nyc_output \

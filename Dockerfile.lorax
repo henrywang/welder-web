@@ -18,6 +18,9 @@ RUN dnf -y update && \
     rm -f /lib/systemd/system/basic.target.wants/* && \
     rm -f /lib/systemd/system/anaconda.target.wants/* && \
     echo "root:foobar" | chpasswd && \
+    mkdir -p /run/weldr && \
+    chmod u=rwX,g=rX,o=--- /run/weldr && \
+    chown root:weldr /run/weldr && \
     systemctl enable cockpit.socket && \
     systemctl enable lorax-composer
 
