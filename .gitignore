@@ -14,3 +14,4 @@ welder-web.spec
 /package-lock.json
 /po/etag-cache.json
 /po/*.pot
+/.vagrant
