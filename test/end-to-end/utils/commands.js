@@ -82,5 +82,14 @@ module.exports = {
     deleteBlueprintPage.loading();
     deleteBlueprintPage.deleteButton.click();
     browser.waitForExist(deleteBlueprintPage.containerSelector, timeout, true);
+  },
+
+  formatAccessibilityViolations: function(violations) {
+    const messages = violations.map(
+      violation =>
+        `\r\n- ${violation.help} (${violation.nodes.length} elements affected)
+            \r  Help: ${violation.helpUrl}\r\n`
+    );
+    return `${violations.length} violations found: ${messages.join("")}`;
   }
 };

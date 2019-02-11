@@ -86,7 +86,8 @@
       "expect": true,
       "timeout": true,
       "$": true,
-      "$$": true
+      "$$": true,
+      "axe": true
     },
     "parser": "babel-eslint",
     "parserOptions": {

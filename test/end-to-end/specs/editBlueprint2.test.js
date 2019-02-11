@@ -1,3 +1,4 @@
+const axeSource = require("axe-core").source;
 const faker = require("faker");
 const commands = require("../utils/commands");
 
@@ -127,7 +128,6 @@ describe("Edit Blueprint Page", function() {
       browser.keys("ArrowDown"); // Edit
       browser.keys("ArrowDown"); // Remove
       browser.keys("Enter");
-      // add cockpit-bridge into selected component
       editBlueprintPage.filterBox.setValue(packageName);
       browser.keys("Enter");
       browser.waitForExist(editBlueprintPage.filterContentLabel, timeout);
@@ -166,6 +166,22 @@ describe("Edit Blueprint Page", function() {
         selectedComponents.loadingComponentCollapse(packageName);
       });
 
+      // it("run assibility test on Component expansion in Edit Blueprints page", function() {
+      //   // inject the script
+      //   browser.execute(axeSource);
+      //   // run inside browser and get results
+      //   let results = browser.executeAsync(function(done) {
+      //     // run axe on current page
+      //     axe.run(function(err, results) {
+      //       if (err) done(err);
+      //       done(results);
+      //     });
+      //   });
+      //   console.log(commands.formatAccessibilityViolations(results.value.violations));
+      //   // Comment out before issues got fixed.
+      //   // expect(results.value.violations.length).to.equal(0);
+      // });
+
       it('should expand compotent and have "Show All" link', function() {
         expect(selectedComponents.showAllLink(packageName).getText()).to.equal("Show All");
       });
@@ -191,6 +207,22 @@ describe("Edit Blueprint Page", function() {
     before(function() {
       editBlueprintPage.dependenciesTabBadge.click();
     });
+
+    // it("run assibility test on Dependencies Tab in Edit Blueprints page", function() {
+    //   // inject the script
+    //   browser.execute(axeSource);
+    //   // run inside browser and get results
+    //   let results = browser.executeAsync(function(done) {
+    //     // run axe on current page
+    //     axe.run(function(err, results) {
+    //       if (err) done(err);
+    //       done(results);
+    //     });
+    //   });
+    //   console.log(commands.formatAccessibilityViolations(results.value.violations));
+    //   // Comment out before issues got fixed.
+    //   // expect(results.value.violations.length).to.equal(0);
+    // });
 
     it("The bedge should show the correct selected package number", function() {
       const totalDependencies = dependencies.depencenciesList.length;
@@ -218,6 +250,22 @@ describe("Edit Blueprint Page", function() {
       bashComponent.nameLabelByName(packageName).click();
       browser.waitUntil(() => componentDetails.componentDescriptionLabel.getText() !== "", timeout);
     });
+
+    // it("run assibility test on Component Details in Edit Blueprints page", function() {
+    //   // inject the script
+    //   browser.execute(axeSource);
+    //   // run inside browser and get results
+    //   let results = browser.executeAsync(function(done) {
+    //     // run axe on current page
+    //     axe.run(function(err, results) {
+    //       if (err) done(err);
+    //       done(results);
+    //     });
+    //   });
+    //   console.log(commands.formatAccessibilityViolations(results.value.violations));
+    //   // Comment out before issues got fixed.
+    //   // expect(results.value.violations.length).to.equal(0);
+    // });
 
     it("Should show correct component name", function() {
       expect(componentDetails.componentNameLabel.getText().trim()).to.equal(packageName);
@@ -282,6 +330,22 @@ describe("Edit Blueprint Page", function() {
       createImagePage.cancelButton.click();
       browser.waitForExist(createImagePage.containerSelector, timeout, true);
     });
+
+    // it("run assibility test on Commit and Create page", function() {
+    //   // inject the script
+    //   browser.execute(axeSource);
+    //   // run inside browser and get results
+    //   let results = browser.executeAsync(function(done) {
+    //     // run axe on current page
+    //     axe.run(function(err, results) {
+    //       if (err) done(err);
+    //       done(results);
+    //     });
+    //   });
+    //   console.log(commands.formatAccessibilityViolations(results.value.violations));
+    //   // Comment out before issues got fixed.
+    //   // expect(results.value.violations.length).to.equal(0);
+    // });
 
     it("should show a correct alert message in Create Image dialog", function() {
       expect(createImagePage.alertMessage.getText().trim()).to.equal(

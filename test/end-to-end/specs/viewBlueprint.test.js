@@ -1,3 +1,4 @@
+const axeSource = require("axe-core").source;
 const faker = require("faker");
 const addContext = require("mochawesome/addContext");
 const commands = require("../utils/commands");
@@ -32,6 +33,22 @@ describe("View Blueprint Page", function() {
     after(function() {
       viewBlueprintPage.backToBlueprintsLink.click();
       blueprintsPage.loading();
+    });
+
+    it("run assibility test in View Blueprints page", function() {
+      // inject the script
+      browser.execute(axeSource);
+      // run inside browser and get results
+      let results = browser.executeAsync(function(done) {
+        // run axe on current page
+        axe.run(function(err, results) {
+          if (err) done(err);
+          done(results);
+        });
+      });
+      console.log(commands.formatAccessibilityViolations(results.value.violations));
+      // Comment out before issues got fixed.
+      // expect(results.value.violations.length).to.equal(0);
     });
 
     describe("Page element checking", function() {
@@ -101,11 +118,31 @@ describe("View Blueprint Page", function() {
     describe("Export Blueprint", function() {
       const ExportPage = require("../pages/Export.page");
       const exportPage = new ExportPage(name);
-      it("should copy correct blueprint manifest", function() {
+
+      before(function() {
         viewBlueprintPage.moreButton.click();
         browser.keys("ArrowDown");
         browser.keys("Enter");
         exportPage.loading();
+      });
+
+      it("run assibility test in Export Blueprints page", function() {
+        // inject the script
+        browser.execute(axeSource);
+        // run inside browser and get results
+        let results = browser.executeAsync(function(done) {
+          // run axe on current page
+          axe.run(function(err, results) {
+            if (err) done(err);
+            done(results);
+          });
+        });
+        console.log(commands.formatAccessibilityViolations(results.value.violations));
+        // Comment out before issues got fixed.
+        // expect(results.value.violations.length).to.equal(0);
+      });
+
+      it("should copy correct blueprint manifest", function() {
         // getText() does not work here on Edge, but works on Firefox and Chrome
         // the copied content should replace '\n' with space because
         // the text in blueprint description box does not include '\n', but space
@@ -168,6 +205,22 @@ describe("View Blueprint Page", function() {
         expect(viewBlueprintPage.completeIcon.getAttribute("class")).to.include("pficon-ok");
       });
 
+      it("run assibility test on Image Tab in View Blueprint page", function() {
+        // inject the script
+        browser.execute(axeSource);
+        // run inside browser and get results
+        let results = browser.executeAsync(function(done) {
+          // run axe on current page
+          axe.run(function(err, results) {
+            if (err) done(err);
+            done(results);
+          });
+        });
+        console.log(commands.formatAccessibilityViolations(results.value.violations));
+        // Comment out before issues got fixed.
+        // expect(results.value.violations.length).to.equal(0);
+      });
+
       describe("Delete Image Page", function() {
         before(function() {
           viewBlueprintPage.imageMoreButton.click();
@@ -180,6 +233,23 @@ describe("View Blueprint Page", function() {
           deleteImagePage.cancelButton.click();
           browser.waitForExist(deleteImagePage.containerSelector, timeout, true);
         });
+
+        it("run assibility test in Delete Image page", function() {
+          // inject the script
+          browser.execute(axeSource);
+          // run inside browser and get results
+          let results = browser.executeAsync(function(done) {
+            // run axe on current page
+            axe.run(function(err, results) {
+              if (err) done(err);
+              done(results);
+            });
+          });
+          console.log(commands.formatAccessibilityViolations(results.value.violations));
+          // Comment out before issues got fixed.
+          // expect(results.value.violations.length).to.equal(0);
+        });
+
         it("Delete Image page should show correct blueprint name", function() {
           expect(deleteImagePage.messageLabel.getText()).to.include(name);
         });

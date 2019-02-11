@@ -1,3 +1,4 @@
+const axeSource = require("axe-core").source;
 const faker = require("faker");
 const addContext = require("mochawesome/addContext");
 const commands = require("../utils/commands");
@@ -24,6 +25,22 @@ describe("Blueprints Page", function() {
   after(function() {
     commands.deleteBlueprint(name);
     blueprintsPage.loading();
+  });
+
+  it("run assibility test in Blueprints page", function() {
+    // inject the script
+    browser.execute(axeSource);
+    // run inside browser and get results
+    let results = browser.executeAsync(function(done) {
+      // run axe on current page
+      axe.run(function(err, results) {
+        if (err) done(err);
+        done(results);
+      });
+    });
+    console.log(commands.formatAccessibilityViolations(results.value.violations));
+    // Comment out before issues got fixed.
+    // expect(results.value.violations.length).to.equal(0);
   });
 
   it("should show the correct blueprint name and description of new added blueprint", function() {

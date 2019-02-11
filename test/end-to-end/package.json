@@ -8,6 +8,7 @@
   "author": "Xiaofeng Wang",
   "license": "MIT",
   "dependencies": {
+    "axe-core": "^3.1.2",
     "chai": "^4.2.0",
     "del": "^3.0.0",
     "faker": "^4.1.0",

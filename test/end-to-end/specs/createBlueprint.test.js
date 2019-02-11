@@ -1,3 +1,4 @@
+const axeSource = require("axe-core").source;
 const addContext = require("mochawesome/addContext");
 const commands = require("../utils/commands");
 
@@ -27,6 +28,22 @@ describe("Create Blueprints Page", function() {
         "Cannot close Create Blueprint dialog"
       );
     }
+  });
+
+  it("run assibility test on Create Blueprint page", function() {
+    // inject the script
+    browser.execute(axeSource);
+    // run inside browser and get results
+    let results = browser.executeAsync(function(done) {
+      // run axe on current page
+      axe.run(function(err, results) {
+        if (err) done(err);
+        done(results);
+      });
+    });
+    console.log(commands.formatAccessibilityViolations(results.value.violations));
+    // Comment out before issues got fixed.
+    // expect(results.value.violations.length).to.equal(0);
   });
 
   it("Help message should look good", function() {
