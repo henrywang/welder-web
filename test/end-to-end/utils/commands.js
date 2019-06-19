@@ -11,18 +11,34 @@ const ToastNotificationPage = require("../pages/ToastNotification.page");
 
 module.exports = {
   login: function() {
+    const username = process.env.COCKPIT_USERNAME || "root";
+    const password = process.env.COCKPIT_PASSWORD || "foobar";
     browser.url("/welder");
-    loginPage.loadingCockpitLoginPage();
-    loginPage.usernameBox.setValue(loginPage.username);
-    loginPage.passwordBox.setValue(loginPage.password);
-    // only for non-root user
-    loginPage.username !== "root" && loginPage.authorizedCheckbox.click();
-    loginPage.loginButton.click();
-    // switch to Image Builder frame
-    browser.frame(loginPage.imageBuilderIframe);
+    // enter username & password
+    $('input[id="login-user-input"]').setValue(username);
+    $('input[id="login-password-input"]').setValue(password);
+    // enable Reuse my password for privileged tasks for non-root user
+    username !== "root" && $('[id="authorized-input"]').click();
+    // click Login In button
+    $('button[id="login-button"]').click();
   },
 
-  startLoraxIfItDoesNotStart: function() {
+  switchToComposerFrame: function() {
+    // switch to Image Builder frame
+    const iframe = $('iframe[name="cockpit1:localhost/welder"]');
+    browser.switchToFrame(iframe);
+  },
+
+  waitForBlueprintsPageLoaded: function() {
+    // wait for blueprints page loaded
+    browser.waitUntil(
+      () => $$(".list-view-pf-view .list-group-item").length >= 3,
+      timeout,
+      "Loading Blueprints page failed"
+    );
+  },
+
+  startLorax: function() {
     if (blueprintsPage.createBlueprintButton.getAttribute("disabled") === "true") {
       const isAutostart = blueprintsPage.autostartCheckbox.isSelected();
       if (!isAutostart) {

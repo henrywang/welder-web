@@ -22,3 +22,4 @@ bots
 screen_error
 wdio_report
 composer.covered
+wdio_log

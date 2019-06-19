@@ -2,6 +2,8 @@ const path = require("path");
 const del = require("del");
 const fs = require("fs");
 const crypto = require("crypto");
+// import commands to add them as browser scope commands
+const commands = require("./utils/commands");
 
 // setup mocha test timeout
 const mochaTimeout = parseInt(process.env.MOCHA_TIMEOUT) || 300000;
@@ -92,7 +94,7 @@ exports.config = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
-  logLevel: process.env.BROWSER || "firefox",
+  logLevel: process.env.DEBUG_TEST === "true" ? "debug" : "silent",
   //
   // Set specific log levels per logger
   // loggers:
@@ -195,9 +197,8 @@ exports.config = {
    * @param {Object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  onPrepare: function(config) {
+  onPrepare: function() {
     // clear old log and report folder
-    del.sync([path.join(process.cwd(), config.outputDir)]);
     del.sync([path.join(process.cwd(), reportDir)]);
   },
   /**
@@ -218,18 +219,20 @@ exports.config = {
    * @param {Array.<String>} specs List of spec file paths that are to be run
    */
   before: function() {
-    // wait a second here to make Edge happy
-    browser.pause(1000);
+    // add custom commands
+    Object.keys(commands).forEach(key => {
+      browser.addCommand(key, commands[key]);
+    });
   },
   /**
    * Runs before a WebdriverIO command gets executed.
    * @param {String} commandName hook command name
    * @param {Array} args arguments that command would receive
    */
-  beforeCommand: function() {
-    // pause half second to keep test stable
-    browser.pause(200);
-  },
+  // beforeCommand: function() {
+  // pause half second to keep test stable
+  // browser.pause(200);
+  // },
 
   /**
    * Hook that gets executed before the suite starts
@@ -238,6 +241,9 @@ exports.config = {
   beforeSuite: function() {
     // reset browser to keep a clean browser
     browser.reloadSession();
+    // driver should wait for 2 seconds when searching for elements
+    browser.setTimeouts(120000);
+    browser.getTimeouts();
   },
   /**
    * Function to be executed before a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
@@ -269,7 +275,7 @@ exports.config = {
    */
   afterSuite: function() {
     const coverageData = browser.execute("return window.__coverage__;");
-    if (coverageData.value !== null) {
+    if (coverageData && coverageData.value !== null) {
       const strCoverage = JSON.stringify(coverageData.value);
       const hash = crypto
         .createHmac("sha256", "")
@@ -321,20 +327,24 @@ exports.config = {
    */
   onComplete: function(exitCode, config, capabilities) {
     // generate html report
+    console.log("done");
     const { execSync } = require("child_process");
+    const mergeResults = require("wdio-mochawesome-reporter/mergeResults");
     const rowName = capabilities[0].browserName;
     const browserName = rowName.charAt(0).toUpperCase() + rowName.slice(1);
+
+    mergeResults();
     let stdout = execSync(
       `
-        marge \
-        --reportDir="wdio_report" \
-        --reportFilename="report-${rowName}" \
-        --reportTitle="Welder-Web End to End Test on ${browserName}" \
-        --reportPageTitle="End to End Test on ${browserName}" \
-        wdio_report/report.json
+        npx marge \
+--reportDir="wdio_report" \
+--reportFilename="report-${rowName}" \
+--reportTitle="Welder-Web End to End Test on ${browserName}" \
+--reportPageTitle="End to End Test on ${browserName}" \
+wdio_report/mochawsome_report.json
         `
     );
-    console.log(stdout.toString());
+    console.log(`result: ${stdout.toString()}`);
   }
   /**
    * Gets executed when a refresh happens.

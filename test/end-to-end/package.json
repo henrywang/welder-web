@@ -26,6 +26,7 @@
     "@wdio/mocha-framework": "^5.10.1",
     "@wdio/spec-reporter": "^5.9.3",
     "@wdio/sync": "^5.10.1",
+    "mochawesome-report-generator": "^4.0.0",
     "wdio-mochawesome-reporter": "^3.1.0"
   }
 }
