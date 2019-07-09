@@ -171,5 +171,23 @@ describe("Sources Page", function() {
         expect(sourcesPage.duplicatedPathWarning.getText()).to.equal("This source path already exists.");
       });
     });
+    describe("error message checking", function() {
+      after(function() {
+        if (sourcesPage.cancelButton.isExisting()) {
+          sourcesPage.cancelButton.click();
+        }
+      });
+
+      it.only("should report error if repo URL is wrong", function() {
+        sourcesPage.addSourceButton.click();
+        sourcesPage.sourceNameInput.waitForExist(timeout);
+        sourcesPage.sourceNameInput.setValue("error url");
+        sourcesPage.sourcePathInput.setValue("http://www.redhat.com");
+        sourcesPage.sourceTypeSelect.selectByValue("yum-baseurl");
+        sourcesPage.addButton.click();
+        sourcesPage.errorMessage.waitForText(timeout);
+        expect(sourcesPage.errorMessage.getText()).to.equal("An error occurred when saving the source. Check that the path is valid and try again.");
+      })
+    })
   });
 });

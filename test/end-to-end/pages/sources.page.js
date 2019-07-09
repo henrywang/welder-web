@@ -113,6 +113,16 @@ class SourcesPage {
   }
 
   // Add source
+  get errorMessage() {
+    const selector = `${this.containerSelector} .modal-body .alert-danger`
+    browser.waitUntil(
+      () => browser.isExisting(selector),
+      timeout,
+      `Error message in create sources dialog cannot be found by selector ${selector}`
+    );
+    return $(selector);
+  }
+
   get sourceNameInput() {
     const selector = `${this.addSourceContainerSelector} [id="textInput1-modal-source"]`;
     browser.waitUntil(
