@@ -3,6 +3,7 @@ const del = require("del");
 const fs = require("fs");
 const crypto = require("crypto");
 const { TimelineService } = require('wdio-timeline-reporter/timeline-service');
+const faker = require("faker");
 // import commands to add them as browser and element scope commands
 const commands = require("./utils/commands");
 
@@ -227,6 +228,28 @@ exports.config = {
     });
     // wait a second here to make Edge happy
     browser.pause(1000);
+
+    // Add three pre-defined blueprints
+    browser.login();
+    browser.switchToComposerFrame();
+    browser.startLoraxIfItDoesNotStart();
+
+    try {
+      const blankNewButton = $('.blank-slate-pf [id="cmpsr-btn-crt-blueprint"]');
+      blankNewButton.waitForDisplayed(timeout/2);
+      const name = faker.lorem.slug();
+      const description = faker.lorem.sentence();
+      browser.newBlueprint(name, description, blankNewButton);
+    } catch (e) {
+      console.error(e);
+    }
+
+    const preDefinedBlueprints = 2;
+    [...Array(preDefinedBlueprints)].forEach(() => {
+      const name = faker.lorem.slug();
+      const description = faker.lorem.sentence();
+      browser.newBlueprint(name, description);
+    })
   },
   /**
    * Runs before a WebdriverIO command gets executed.
@@ -240,7 +263,7 @@ exports.config = {
    * Hook that gets executed before the suite starts
    * @param {Object} suite suite details
    */
-  beforeSuite: function(suite) {
+  beforeSuite: function() {
     // reset browser to keep a clean browser
     browser.reloadSession();
     // make browser window maximum
@@ -252,10 +275,6 @@ exports.config = {
     // login cockpit and enter into composer page
     browser.login();
     browser.switchToComposerFrame();
-    // only the first suite needs start lorax-composer
-    if (suite.title === "lorax-composer api sanity test") {
-      browser.startLoraxIfItDoesNotStart();
-    }
   },
   /**
    * Function to be executed before a test (in Mocha/Jasmine) starts.

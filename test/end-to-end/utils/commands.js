@@ -86,10 +86,8 @@ module.exports = {
     }
   },
 
-  newBlueprint: function(name, description) {
-    // on Blueprints page
-    blueprintsPage.loading();
-    blueprintsPage.createBlueprintButton.click();
+  newBlueprint: function(name, description, createButton=blueprintsPage.createBlueprintButton) {
+    createButton.click();
     // pop up create blueprint dialog
     createBlueprintPage.loading();
     createBlueprintPage.nameBox.setInputValue(name);

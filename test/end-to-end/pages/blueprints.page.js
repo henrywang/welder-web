@@ -6,7 +6,7 @@ class BlueprintsPage {
 
   loading() {
     $(this.blueprintListView).waitForExist(timeout);
-    browser.waitUntil(() => $$(this.blueprintListView).length >= 3, timeout, "Loading Blueprints page failed");
+    browser.waitUntil(() => $$(this.blueprintListView).length >= 1, timeout, "Loading Blueprints page failed");
   }
 
   filterLoading() {
